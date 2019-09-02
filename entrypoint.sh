@@ -2,6 +2,9 @@
 
 set -u
 
+DEFAULT_POLL_TIMEOUT=10
+POLL_TIMEOUT=${POLL_TIMEOUT:-$DEFAULT_POLL_TIMEOUT}
+
 git checkout "${GITHUB_REF:11}"
 
 branch=$(git symbolic-ref --short HEAD)
@@ -13,15 +16,19 @@ sh -c "git remote add mirror $*"
 sh -c "echo pushing to $branch branch at $(git remote get-url --push mirror)"
 sh -c "git push mirror $branch"
 
-sleep 5s
+sleep $POLL_TIMEOUT
 
 pipeline_id=$(curl --header "PRIVATE-TOKEN: $GITLAB_PASSWORD" "https://${GITLAB_HOSTNAME}/api/v4/projects/${GITLAB_PROJECT_ID}/repository/commits/${branch}" | jq '.last_pipeline.id')
+
+echo "Triggered CI for branch $branch}"
+echo "Working with pipeline id #${pipeline_id}"
+echo "Poll timeout set to ${POLL_TIMEOUT}
 
 ci_status="pending"
 
 until [[ "$ci_status" != "pending" && "$ci_status" != "running" ]]
 do
-   sleep 5s 
+   sleep $POLL_TIMEOUT
    ci_output=$(curl --header "PRIVATE-TOKEN: $GITLAB_PASSWORD" "https://${GITLAB_HOSTNAME}/api/v4/projects/${GITLAB_PROJECT_ID}/pipelines/${pipeline_id}")
    ci_status=$(jq -n "$ci_output" | jq -r .status)
    ci_web_url=$(jq -n "$ci_output" | jq -r .web_url)
