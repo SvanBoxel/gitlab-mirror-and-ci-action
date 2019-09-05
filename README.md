@@ -1,6 +1,8 @@
 # Mirror to GitLab and trigger GitLab CI
 
-A GitHub Action that mirrors all commits to GitLab, triggers GitLab CI, and returns the results back to GitHub.
+A GitHub Action that mirrors all commits to GitLab, triggers GitLab CI, and returns the results back to GitHub. 
+
+This action uses active polling to determine whether the GitLab pipeline is finished. This means our GitHub Action will run for the same amount of time as it takes for GitLab CI to finish the pipeline. 
 
 ## Example workflow
 
