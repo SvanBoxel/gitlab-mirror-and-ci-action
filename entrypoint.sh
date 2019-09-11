@@ -18,7 +18,7 @@ sh -c "git push mirror $branch"
 
 sleep $POLL_TIMEOUT
 
-curl --header "PRIVATE-TOKEN: $GITLAB_PASSWORD" -d '{"pipeline_events":"true"}' --silent "https://${GITLAB_HOSTNAME}/api/v4/projects/${GITLAB_PROJECT_ID}/hooks
+curl --header "PRIVATE-TOKEN: $GITLAB_PASSWORD" -d '{"pipeline_events":"true", "url": "https://github.com"}' --silent "https://${GITLAB_HOSTNAME}/api/v4/projects/${GITLAB_PROJECT_ID}/hooks"
 
 pipeline_id=$(curl --header "PRIVATE-TOKEN: $GITLAB_PASSWORD" --silent "https://${GITLAB_HOSTNAME}/api/v4/projects/${GITLAB_PROJECT_ID}/repository/commits/${branch}" | jq '.last_pipeline.id')
 
