@@ -30,4 +30,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} // https://help.github.com/en/articles/virtual-environments-for-github-actions#github_token-secret
 ```
 
-Be sure to define the `GITLAB_PASSWORD` secret.
+Be sure to define the `GITLAB_PASSWORD` secret in https://github.com/<namespace>/<repository>/settings/secrets
+Before setup a token to use as `GITLAB_PASSWORD` here https://gitlab.com/profile/personal_access_tokens
+The token must have `read_api`, `read_repository` & `write_repository` permissions in GitLab.
+For granular permissions create seperate users and tokens in GitLab with restricted access.
