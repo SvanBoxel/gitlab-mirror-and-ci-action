@@ -45,6 +45,16 @@ do
 done
 
 echo "Pipeline finished with status ${ci_status}"
+
+echo "Fetching all GitLab pipeline jobs involved"
+ci_jobs=$(curl --header "PRIVATE-TOKEN: $GITLAB_PASSWORD" --silent "https://${GITLAB_HOSTNAME}/api/v4/projects/${GITLAB_PROJECT_ID}/pipelines/${pipeline_id}/jobs" | jq -r '.[] | { id, name, stage }')
+echo "Posting output from all GitLab pipeline jobs"
+for JOB_ID in $(echo $ci_jobs | jq -r .id); do
+  echo "##[group]Stage $( echo $ci_jobs | jq -r "select(.id=="$JOB_ID") | .stage" ) / Job $( echo $ci_jobs | jq -r "select(.id=="$JOB_ID") | .name" )"
+  curl --header "PRIVATE-TOKEN: $GITLAB_PASSWORD" --silent "https://${GITLAB_HOSTNAME}/api/v4/projects/${GITLAB_PROJECT_ID}/jobs/${JOB_ID}/trace"
+  echo "##[endgroup]"
+done
+echo "Debug problems by unfolding stages/jobs above"
   
 if [ "$ci_status" = "success" ]
 then 
