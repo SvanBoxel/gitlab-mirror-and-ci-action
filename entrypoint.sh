@@ -1,7 +1,23 @@
 #!/bin/sh
 
 set -u
+##################################################################
+urlencode() (
+    i=1
+    max_i=${#1}
+    while test $i -le $max_i; do
+        c="$(expr substr $1 $i 1)"
+        case $c in
+            [a-zA-Z0-9.~_-])
+		printf "$c" ;;
+            *)
+		printf '%%%02X' "'$c" ;;
+        esac
+        i=$(( i + 1 ))
+    done
+)
 
+##################################################################
 DEFAULT_POLL_TIMEOUT=10
 POLL_TIMEOUT=${POLL_TIMEOUT:-$DEFAULT_POLL_TIMEOUT}
 
