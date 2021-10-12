@@ -1,4 +1,4 @@
-FROM makocchi/alpine-git-curl-jq:latest
+FROM krauthosting/ubi8-git-curl-jq:latest
 
 LABEL "com.github.actions.name"="Mirror to GitLab and run GitLab CI"
 LABEL "com.github.actions.description"="Automate mirroring of git commits to GitLab, trigger GitLab CI and post results back to GitHub"
