@@ -1,18 +1,30 @@
 #!/bin/sh
 
 set -u
+##################################################################
+urlencode() (
+    i=1
+    max_i=${#1}
+    while test $i -le $max_i; do
+        c="$(expr substr $1 $i 1)"
+        case $c in
+            [a-zA-Z0-9.~_-])
+		printf "$c" ;;
+            *)
+		printf '%%%02X' "'$c" ;;
+        esac
+        i=$(( i + 1 ))
+    done
+)
 
+##################################################################
 DEFAULT_POLL_TIMEOUT=10
 POLL_TIMEOUT=${POLL_TIMEOUT:-$DEFAULT_POLL_TIMEOUT}
 
 git checkout "${GITHUB_REF:11}"
 
-if [ "$GITLAB_HOSTNAME" = "gitlab.com" ]
-then
-  branch=${GITHUB_REPOSITORY}/$(git symbolic-ref --short HEAD)
-else
-  branch=$(git symbolic-ref --short HEAD)
-fi
+branch="$(git symbolic-ref --short HEAD)"
+branch_uri="$(urlencode ${branch})"
 
 sh -c "git config --global credential.username $GITLAB_USERNAME"
 sh -c "git config --global core.askPass /cred-helper.sh"
@@ -23,10 +35,7 @@ sh -c "git push mirror $branch"
 
 sleep $POLL_TIMEOUT
 
-# convert slashes in a HTML-compatible way
-branch=${branch//\//%2F}
-
-pipeline_id=$(curl --header "PRIVATE-TOKEN: $GITLAB_PASSWORD" --silent "https://${GITLAB_HOSTNAME}/api/v4/projects/${GITLAB_PROJECT_ID}/repository/commits/${branch}" | jq '.last_pipeline.id')
+pipeline_id=$(curl --header "PRIVATE-TOKEN: $GITLAB_PASSWORD" --silent "https://${GITLAB_HOSTNAME}/api/v4/projects/${GITLAB_PROJECT_ID}/repository/commits/${branch_uri}" | jq '.last_pipeline.id')
 
 echo "Triggered CI for branch ${branch}"
 echo "Working with pipeline id #${pipeline_id}"
