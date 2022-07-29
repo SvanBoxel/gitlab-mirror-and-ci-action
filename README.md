@@ -35,3 +35,7 @@ Be sure to define the `GITLAB_PASSWORD` secret in `https://github.com/<namespace
 Before setup a token to use as `GITLAB_PASSWORD` here https://gitlab.com/profile/personal_access_tokens  
 The token must have `read_api`, `read_repository` & `write_repository` permissions in GitLab.  
 For granular permissions create seperate users and tokens in GitLab with restricted access.  
+
+## Force push
+
+If you're rewriting history in the primary repo (e.g by using `git rebase`), you'll need to force push. Set the FORCE_PUSH environment variable to `true` to enable this. This will overwrite history in teh mirror as well, so be careful with this (just like any time you're using `git push --force`).
