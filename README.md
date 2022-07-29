@@ -23,6 +23,7 @@ jobs:
       with:
         args: "https://gitlab.com/<namespace>/<repository>"
       env:
+        FORCE_PUSH: "true"
         GITLAB_HOSTNAME: "gitlab.com"
         GITLAB_USERNAME: "svboxel"
         GITLAB_PASSWORD: ${{ secrets.GITLAB_PASSWORD }} // Generate here: https://gitlab.com/profile/personal_access_tokens
