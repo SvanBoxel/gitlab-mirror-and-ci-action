@@ -38,6 +38,12 @@ else
   sh -c "git push mirror $branch"
 fi
 
+if [ "${FOLLOW_TAGS:-}" = "true" ]
+then
+  sh -c "echo pushing with --tags"
+  sh -c "git push --tags mirror $branch"
+fi
+
 sleep $POLL_TIMEOUT
 
 pipeline_id=$(curl --header "PRIVATE-TOKEN: $GITLAB_PASSWORD" --silent "https://${GITLAB_HOSTNAME}/api/v4/projects/${GITLAB_PROJECT_ID}/repository/commits/${branch_uri}" | jq '.last_pipeline.id')
