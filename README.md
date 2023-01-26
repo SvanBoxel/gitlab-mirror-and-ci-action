@@ -23,6 +23,7 @@ jobs:
       with:
         args: "https://gitlab.com/<namespace>/<repository>"
       env:
+        FOLLOW_TAGS: "false"
         FORCE_PUSH: "false"
         GITLAB_HOSTNAME: "gitlab.com"
         GITLAB_USERNAME: "svboxel"
@@ -37,3 +38,5 @@ The token must have `read_api`, `read_repository` & `write_repository` permissio
 For granular permissions create seperate users and tokens in GitLab with restricted access.  
 
 If you're rewriting history in the primary repo (e.g by using `git rebase`), you'll need to force push. Set the `FORCE_PUSH` environment variable to `true` to enable this. This will overwrite history in the mirror as well, so be **careful with this** (just like any time you're using `git push --force`).
+
+If you want to mirror repository tags too, you can define `FOLLOW_TAGS` environment variable to `true`.
